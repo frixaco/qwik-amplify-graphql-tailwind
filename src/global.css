@@ -1,80 +1,122 @@
 /**
- * WHAT IS THIS FILE?
- *
- * Globally applied styles. No matter which components are in the page or matching route,
- * the styles in here will be applied to the Document, without any sort of CSS scoping.
- *
+ * Tailwind CSS imports
+ * View the full documentation at https://tailwindcss.com
  */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
- :root {
-  --qwik-dark-blue: #006ce9;
-  --qwik-light-blue: #18b6f6;
-  --qwik-light-purple: #ac7ff4;
-  --qwik-dark-purple: #713fc2;
-  --qwik-dirty-black: #1d2033;
-  --qwik-dark-background: #151934;
-  --qwik-dark-text: #ffffff;
+@layer base {
+  :root {
+    /* BASE VARIABLES */
+
+    /* Default background color of <body />...etc */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    /* Default border color */
+    --border: 0 0% 100%;
+
+    /* Border color for inputs such as <Input />, <Select />, <Textarea /> */
+    --input: 206 6% 25%;
+
+    /* Primary colors for <Button /> */
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --primary-gold: 46 43% 62%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 0 0% 100%;
+    --muted-foreground: 0 0% 66%;
+
+    --file-input: 0 1% 13%;
+    --file-input-foreground: 0 0% 52%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Used for focus ring color */
+    --ring: 0 0% 50%;
+
+    /* Border radius for card, input and buttons */
+    --radius-md: 0.625rem;
+    --radius-lg: 1rem;
+  }
+
+  .dark {
+  }
 }
 
-html {
-  line-height: 1;
-  -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
 }
 
-body {
-  padding: 0;
-  margin: 0;
-  line-height: inherit;
-}
-
-/**
- * WHAT IS THIS FILE?
- *
- * Globally applied styles. No matter which components are in the page or matching route,
- * the styles in here will be applied to the Document, without any sort of CSS scoping.
- *
- */
-html {
-  -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
-}
-
-body {
-  padding: 0;
-  line-height: inherit;
+@layer utilities {
+  .bg-primary-gradient {
+    background-image: linear-gradient(
+      to right,
+      hsl(0 0% 100% / 100%),
+      hsl(213 7% 78% / 100%)
+    );
+  }
+  .bg-primary-gradient:hover {
+    background-image: linear-gradient(
+      to right,
+      hsl(0 0% 100% / 90%),
+      hsl(213 7% 78% / 90%)
+    );
+  }
+  .bg-block-gradient {
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.03)
+    );
+    box-shadow:
+      0px 0px 10px 0px rgba(255, 255, 255, 0.1),
+      8px 0px 15px 0px rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    /* background-color: #000; */
+  }
+  .bg-logo-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(199, 180, 115, 0.18) 0%,
+      rgba(128, 113, 71, 0.18) 77.6%,
+      rgba(115, 98, 55, 0.18) 100%
+    );
+    filter: blur(40px);
+  }
+  .bg-dialog-gradient {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(112deg, #161616 1.01%, #353535 98.12%),
+      linear-gradient(
+        112deg,
+        rgba(255, 255, 255, 0.15) 1.01%,
+        rgba(255, 255, 255, 0.12) 98.12%,
+        rgba(255, 255, 255, 0.1) 98.12%
+      );
+    box-shadow:
+      0px 6px 40px 0px rgba(21, 19, 29, 0.1),
+      4px 4px 25px 0px rgba(255, 255, 255, 0.15) inset;
+    backdrop-filter: blur(15px);
+  }
+  .selected-item-gradient {
+    background-image: linear-gradient(
+      112deg,
+      rgba(199, 180, 115, 1),
+      rgba(128, 113, 71, 1),
+      rgba(115, 98, 55, 1)
+    );
+  }
 }
