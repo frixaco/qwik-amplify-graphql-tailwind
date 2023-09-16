@@ -8,9 +8,9 @@ const config: PlaywrightTestConfig = {
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: true,
-  forbidOnly: !!import.meta.CI,
+  forbidOnly: !!process.env.CI,
   retries: 2,
-  workers: import.meta.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
     actionTimeout: 0,

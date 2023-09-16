@@ -1,16 +1,16 @@
 import {
   $,
   component$,
-  useOnDocument,
   useTask$,
-  useVisibleTask$,
 } from "@builder.io/qwik";
 import type { InitialValues, SubmitHandler } from "@modular-forms/qwik";
 import { formAction$, useForm, zodForm$ } from "@modular-forms/qwik";
-import { routeLoader$, useNavigate, z } from "@builder.io/qwik-city";
-import { Amplify, Auth } from "aws-amplify";
-import { amplifyConfig } from "~/core/aws-amplify";
-import { isServer } from "@builder.io/qwik/build";
+import { type RequestHandler, routeLoader$, useNavigate, z } from "@builder.io/qwik-city";
+import amplifyInstance from "~/core/aws-amplify";
+
+export const onGet: RequestHandler = async () => {
+  console.log('onGet signin /')
+}
 
 const signInSchema = z.object({
   email: z
@@ -35,46 +35,24 @@ export const useFormLoader = routeLoader$<InitialValues<SignInForm>>(() => ({
   password: "1234567aA+",
 }));
 
-// export const signIn = server$(
-//   async (values: SignInForm): Promise<SignInResponse> => {
-//     try {
-//       const response = await Auth.signIn(values.email, values.password);
-//       return {
-//         message: "Success",
-//         data: response.username,
-//         status: "success",
-//       };
-//     } catch (error: any) {
-//       console.log("signIn error", error);
-
-//       return {
-//         message: error?.message || "",
-//         data: error,
-//         status: "error",
-//       };
-//     }
-//   }
-// );
-
 export const useFormAction = formAction$<SignInForm, Promise<SignInResponse>>(
   async (values) => {
     try {
-      const response = await Auth.signIn(values.email, values.password);
-      console.log(response);
-
+      console.log("formAction", values);
+      const response = await amplifyInstance.Auth.signIn(values.email, values.password);
+      console.log("signIn response", response.username);
       return {
-        message: "Success",
-        data: response.username,
         status: "success",
+        data: response.username,
+        message: "Successfully signed in."
       };
-    } catch (error: any) {
+    } catch (error) {
       console.log("signIn error", error);
-
       return {
-        message: error?.message || "",
-        data: error,
         status: "error",
-      };
+        data: undefined,
+        message: "Failed to sign in."
+      }
     }
   },
   zodForm$(signInSchema)
@@ -89,22 +67,6 @@ export default component$(() => {
     action: useFormAction(),
     validate: zodForm$(signInSchema),
   });
-
-  useTask$(() => {
-    if (isServer) {
-      Amplify.configure(amplifyConfig);
-      console.log("Amplify configured in server");
-    }
-  });
-
-  useOnDocument(
-    "load",
-    $(() => {
-      Amplify.configure(amplifyConfig);
-      console.log("Amplify configured in client");
-    })
-  );
-
   const handleSubmit = $<SubmitHandler<SignInForm>>(async (values) => {
     console.log("handleSubmit", values);
   });
@@ -114,6 +76,7 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => signInForm.response);
 
+    console.log('task')
     if (signInForm.response.status === "success") {
       nav("/dashboard");
     }
@@ -162,7 +125,6 @@ export default component$(() => {
       </Form>
 
       {signInForm.submitting && <div>Submitting...</div>}
-      <div>{JSON.stringify(signInForm.response)}</div>
     </div>
   );
 });

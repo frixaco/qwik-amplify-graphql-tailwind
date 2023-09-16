@@ -6,6 +6,15 @@ import {
 } from "@builder.io/qwik-city";
 
 import "./global.css";
+import amplifyInstance from "./core/aws-amplify";
+
+amplifyInstance;
+
+const htmlGlobalSetup = `
+  if (typeof global === 'undefined' && typeof globalThis !== 'undefined') {
+    window.global = globalThis;
+  }
+`
 
 export default component$(() => {
   /**
@@ -20,7 +29,7 @@ export default component$(() => {
       <head>
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
-        <script dangerouslySetInnerHTML="if(global===undefined){var global = window;}"></script>
+        <script dangerouslySetInnerHTML={htmlGlobalSetup} />
         <ServiceWorkerRegister />
       </head>
       <body lang="en">

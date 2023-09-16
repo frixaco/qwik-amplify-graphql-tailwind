@@ -26,7 +26,9 @@
     "qwik": "qwik"
   },
   "devDependencies": {
+    "@auth/core": "^0.7.1",
     "@builder.io/qwik": "^1.2.10",
+    "@builder.io/qwik-auth": "0.1.0",
     "@builder.io/qwik-city": "^1.2.10",
     "@modular-forms/qwik": "^0.20.2",
     "@playwright/test": "1.36.2",
