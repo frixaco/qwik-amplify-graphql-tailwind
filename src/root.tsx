@@ -20,6 +20,7 @@ export default component$(() => {
       <head>
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
+        <script dangerouslySetInnerHTML="if(global===undefined){var global = window;}"></script>
         <ServiceWorkerRegister />
       </head>
       <body lang="en">

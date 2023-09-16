@@ -1,8 +1,16 @@
-import { $, component$ } from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  useOnDocument,
+  useTask$,
+  useVisibleTask$,
+} from "@builder.io/qwik";
 import type { InitialValues, SubmitHandler } from "@modular-forms/qwik";
 import { formAction$, useForm, zodForm$ } from "@modular-forms/qwik";
-import { routeLoader$, z } from "@builder.io/qwik-city";
-import { Auth } from "aws-amplify";
+import { routeLoader$, useNavigate, z } from "@builder.io/qwik-city";
+import { Amplify, Auth } from "aws-amplify";
+import { amplifyConfig } from "~/core/aws-amplify";
+import { isServer } from "@builder.io/qwik/build";
 
 const signInSchema = z.object({
   email: z
@@ -27,16 +35,41 @@ export const useFormLoader = routeLoader$<InitialValues<SignInForm>>(() => ({
   password: "1234567aA+",
 }));
 
+// export const signIn = server$(
+//   async (values: SignInForm): Promise<SignInResponse> => {
+//     try {
+//       const response = await Auth.signIn(values.email, values.password);
+//       return {
+//         message: "Success",
+//         data: response.username,
+//         status: "success",
+//       };
+//     } catch (error: any) {
+//       console.log("signIn error", error);
+
+//       return {
+//         message: error?.message || "",
+//         data: error,
+//         status: "error",
+//       };
+//     }
+//   }
+// );
+
 export const useFormAction = formAction$<SignInForm, Promise<SignInResponse>>(
   async (values) => {
     try {
       const response = await Auth.signIn(values.email, values.password);
+      console.log(response);
+
       return {
         message: "Success",
         data: response.username,
         status: "success",
       };
     } catch (error: any) {
+      console.log("signIn error", error);
+
       return {
         message: error?.message || "",
         data: error,
@@ -57,8 +90,33 @@ export default component$(() => {
     validate: zodForm$(signInSchema),
   });
 
+  useTask$(() => {
+    if (isServer) {
+      Amplify.configure(amplifyConfig);
+      console.log("Amplify configured in server");
+    }
+  });
+
+  useOnDocument(
+    "load",
+    $(() => {
+      Amplify.configure(amplifyConfig);
+      console.log("Amplify configured in client");
+    })
+  );
+
   const handleSubmit = $<SubmitHandler<SignInForm>>(async (values) => {
     console.log("handleSubmit", values);
+  });
+
+  const nav = useNavigate();
+
+  useTask$(({ track }) => {
+    track(() => signInForm.response);
+
+    if (signInForm.response.status === "success") {
+      nav("/dashboard");
+    }
   });
 
   return (

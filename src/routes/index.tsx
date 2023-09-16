@@ -1,8 +1,6 @@
-import { component$, useTask$ } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
-import { type DocumentHead } from "@builder.io/qwik-city";
-import { Amplify, Auth } from "aws-amplify";
-import { amplifyConfig } from "~/core/aws-amplify";
+import { component$ } from "@builder.io/qwik";
+import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Auth } from "aws-amplify";
 
 import VbratoLogoWithText from "~/media/logo/logo-with-text.png?jsx";
 
@@ -22,19 +20,20 @@ const checkAuth = async () => {
   }
 };
 
-// export const onGet: RequestHandler = async ({ redirect }) => {
-//   const userId = await checkAuth();
-//   if (userId) {
-//     throw redirect(308, "/dashboard");
-//   }
-//   throw redirect(308, "/signin");
-// };
+export const useRouteAuth = routeLoader$(async ({ redirect }) => {
+  try {
+    const userId = await checkAuth();
+    if (userId) {
+      throw redirect(308, "/dashboard");
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+  throw redirect(308, "/signin");
+});
 
 export default component$(() => {
-  useTask$(() => {
-    Amplify.configure(amplifyConfig);
-    console.log("Amplify configured");
-  });
+  useRouteAuth();
 
   return (
     <div class="flex h-screen w-screen items-center justify-center">

@@ -1,37 +1,27 @@
-import { component$, useTask$ } from "@builder.io/qwik";
+import { component$, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { routeAction$, server$, useNavigate } from "@builder.io/qwik-city";
 import { Amplify, Auth, Hub } from "aws-amplify";
 import { amplifyConfig } from "~/core/aws-amplify";
 
-export const useSignOut = routeAction$(async ({}) => {});
 const signOut = server$(async () => {
   await Auth.signOut();
 });
 
 export default component$(() => {
-  // const signOut = useSignOut();
-  // const nav = useNavigate();
+  const nav = useNavigate();
 
-  // useTask$(({ cleanup }) => {
-  //   const hubListener = async (data: any) => {
-  //     console.log("Hub listener", data.payload.event);
+  useVisibleTask$(({ cleanup }) => {
+    const hubListener = (data: any) => {
+      switch (data.payload.event) {
+        case "signOut":
+          nav("/");
+          break;
+      }
+    };
 
-  //     switch (data.payload.event) {
-  //       case "tokenRefresh_failure":
-  //       case "signOut":
-  //         await nav("/signin");
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   };
-  //   const unsub = Hub.listen("auth", hubListener);
-  //   console.log("Hub listener added", unsub);
-
-  //   cleanup(() => {
-  //     unsub();
-  //   });
-  // });
+    const unsub = Hub.listen("auth", hubListener);
+    cleanup(() => unsub());
+  });
 
   return (
     <div class="flex flex-col h-screen w-screen items-center justify-center">

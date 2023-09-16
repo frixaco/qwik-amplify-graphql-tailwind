@@ -31,7 +31,7 @@ const { router, notFound, staticFile } = createQwikCity({
     cacheControl: "public, max-age=31557600",
   },
   getOrigin(req) {
-    if (process.env.IS_OFFLINE) {
+    if (import.meta.IS_OFFLINE) {
       return `http://${req.headers.host}`;
     }
     return null;
@@ -51,7 +51,7 @@ export const qwikApp = serverless(
   },
   {
     binary: true,
-  },
+  }
 );
 
 function fixPath(path: string) {
